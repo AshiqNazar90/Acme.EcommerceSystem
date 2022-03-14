@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Acme.EcommerceSystem.UserAccounts;
+using Acme.EcommerceSystem.UserProfiles;
+using Acme.EcommerceSystem.UserTransactions;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -46,6 +50,12 @@ public class EcommerceSystemDbContext :
     public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
     public DbSet<IdentityLinkUser> LinkUsers { get; set; }
 
+    public DbSet<UserProfile> UserProfiles { get; set; }
+
+    public DbSet<UserAccount> UserAccounts { get; set; }
+
+    public DbSet<UserTransaction> UserTransactions { get; set; }   
+
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
@@ -81,5 +91,40 @@ public class EcommerceSystemDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<UserProfile>(b =>
+        {
+            b.ToTable(EcommerceSystemConsts.DbTablePrefix + "UserProfiles", EcommerceSystemConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+
+            b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Age).IsRequired().HasMaxLength(3);
+            b.Property(x => x.Address).IsRequired().HasMaxLength(100);
+
+            b.HasIndex(x => x.Name).IsUnique();
+
+
+        });
+
+        builder.Entity<UserAccount>(b =>
+        {
+            b.ToTable(EcommerceSystemConsts.DbTablePrefix + "UserAccounts", EcommerceSystemConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+
+                b.Property(x => x.BankName).IsRequired().HasMaxLength(100);
+            b.Property(x => x.ActNumber).IsRequired().HasMaxLength(18);
+            b.Property(x => x.UserName).IsRequired().HasMaxLength(100);
+
+            b.HasOne(b => b.UserAccount).WithMany(a => a.UserProfile).HasForeignKey(z => z.UserID).IsRequired();
+            b.HasOne(b => b.UserAccount).WithMany(a => a.UserTransaction).HasForeignKey(z => z.UserTransactionID).IsRequired();
+        });
+
+        builder.Entity<UserTransaction>(b =>
+        {
+            b.ToTable(EcommerceSystemConsts.DbTablePrefix + "UserTransactions", EcommerceSystemConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            //b.HasOne(b => b.UserProfile).WithMany(a => a.UserAccounts).HasForeignKey(z => z.UserID).IsRequired();
+
+        });
     }
 }

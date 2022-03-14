@@ -4,6 +4,7 @@ using Acme.EcommerceSystem.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,10 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.EcommerceSystem.Migrations
 {
     [DbContext(typeof(EcommerceSystemDbContext))]
-    partial class EcommerceSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220314062702_first")]
+    partial class first
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,6 +55,9 @@ namespace Acme.EcommerceSystem.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
+
+                    b.Property<Guid>("UAId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
@@ -108,6 +113,9 @@ namespace Acme.EcommerceSystem.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UPId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("UserProfiles");
@@ -139,6 +147,9 @@ namespace Acme.EcommerceSystem.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
+
+                    b.Property<Guid>("UTId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
